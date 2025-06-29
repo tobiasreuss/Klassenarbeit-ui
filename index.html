@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Korrekturservice Klassenarbeit</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2em auto; }
+    input, select, button { margin-top: 10px; display: block; width: 100%; padding: 0.5em; }
+    h1 { color: #333; }
+    pre { background: #f5f5f5; padding: 1em; }
+  </style>
+</head>
+<body>
+  <h1>📝 Klassenarbeit hochladen</h1>
+  <form id="uploadForm">
+    <label>📄 Klassenarbeit (PDF oder Bild):</label>
+    <input type="file" name="data" required>
+
+    <label>🎓 Klassenstufe:</label>
+    <select name="klasse" required>
+      <option value="">Bitte wählen</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+    </select>
+
+    <label>📘 Fach:</label>
+    <select name="fach" required>
+      <option value="">Bitte wählen</option>
+      <option value="Deutsch">Deutsch</option>
+      <option value="Mathematik">Mathematik</option>
+      <option value="Englisch">Englisch</option>
+    </select>
+
+    <button type="submit">Hochladen & bewerten</button>
+  </form>
+
+  <h2>📊 Ergebnis</h2>
+  <pre id="result"></pre>
+
+  <script>
+    document.getElementById("uploadForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const klasse = formData.get("klasse");
+      const fach = formData.get("fach");
+
+      formData.append("klasse", klasse);
+      formData.append("fach", fach);
+
+      const res = await fetch("https://minerva.app.n8n.cloud/webhook/klassenarbeit", {
+        method: "POST",
+        body: formData
+      });
+
+      const result = document.getElementById("result");
+      if (!res.ok) {
+        result.textContent = "❌ Fehler beim Hochladen.";
+        return;
+      }
+
+      const json = await res.json();
+      result.textContent = JSON.stringify(json, null, 2);
+    });
+  </script>
+</body>
+</html>
