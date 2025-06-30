@@ -39,62 +39,33 @@
       display: grid;
       gap: 1rem;
     }
-    label {
-      font-weight: bold;
-    }
-    input[type="file"],
-    select,
-    button {
-      width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: var(--box-radius);
+    label { font-weight: bold; }
+    input[type="file"], select, button {
+      width: 100%; padding: 0.75rem; font-size: 1rem;
+      border: 1px solid #ccc; border-radius: var(--box-radius);
       box-sizing: border-box;
     }
     button {
-      background: var(--primary-color);
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      transition: filter 0.3s;
+      background: var(--primary-color); color: #fff;
+      border: none; cursor: pointer; transition: filter 0.3s;
     }
-    button:hover {
-      filter: brightness(0.9);
-    }
-    .results {
-      margin-top: 2rem;
-    }
+    button:hover { filter: brightness(0.9); }
+    .results { margin-top: 2rem; }
     .box {
-      padding: 1rem;
-      border-radius: var(--box-radius);
-      box-shadow: var(--box-shadow);
-      margin-bottom: 1rem;
+      padding: 1rem; border-radius: var(--box-radius);
+      box-shadow: var(--box-shadow); margin-bottom: 1rem;
     }
-    .streng {
-      border-left: 6px solid #e74c3c;
-      background: #fdecea;
-    }
-    .nachsichtig {
-      border-left: 6px solid #27ae60;
-      background: #e8f8f5;
-    }
+    .streng { border-left: 6px solid #e74c3c; background: #fdecea; }
+    .nachsichtig { border-left: 6px solid #27ae60; background: #e8f8f5; }
     pre {
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      background: #fafafa;
-      padding: 0.5rem;
-      border-radius: var(--box-radius);
-      overflow-x: auto;
+      white-space: pre-wrap; word-wrap: break-word;
+      background: #fafafa; padding: 0.5rem;
+      border-radius: var(--box-radius); overflow-x: auto;
     }
     .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid var(--accent-color);
-      border-radius: 50%;
-      width: 2rem;
-      height: 2rem;
-      animation: spin 1s linear infinite;
-      margin: 2rem auto;
+      border: 4px solid #f3f3f3; border-top: 4px solid var(--accent-color);
+      border-radius: 50%; width: 2rem; height: 2rem;
+      animation: spin 1s linear infinite; margin: 2rem auto;
     }
     @keyframes spin {
       0% { transform: rotate(0deg); }
@@ -123,18 +94,17 @@
       </select>
       <button type="submit">Absenden & bewerten</button>
     </form>
-    <div class="results" id="results"></div>
+    <div id="results" class="results"></div>
   </div>
   <script>
-    // Dropdown-Klassenstufen dynamisch befüllen
+    // Dropdown-Klassenstufen füllen
     const klasseSel = document.getElementById('klasseSelect');
     for (let i = 1; i <= 13; i++) {
       const opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = `Klasse ${i}`;
+      opt.value = i; opt.textContent = `Klasse ${i}`;
       klasseSel.appendChild(opt);
     }
-
+    
     const form = document.getElementById('korrekturForm');
     const resultsDiv = document.getElementById('results');
     const WEBHOOK_URL = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
@@ -145,29 +115,22 @@
 
       const formData = new FormData(form);
       try {
-        const resp = await fetch(WEBHOOK_URL, {
-          method: 'POST',
-          body: formData
-        });
+        const resp = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
         if (!resp.ok) throw new Error(`Fehler ${resp.status}`);
-        const json = await resp.json();
-        console.log(json);
+        const wrapper = await resp.json();
+        console.log('API raw:', wrapper);
+        // Inhalt parsen
+        const content = wrapper.message?.content || wrapper.content || JSON.stringify(wrapper);
+        const parsed = JSON.parse(content);
+        console.log('Parsed JSON:', parsed);
 
-        const strengObj = json.streng || json.Streng || {};
-        const nachObj = json.nachsichtig || json.Nachsichtig || {};
-        const noteS = strengObj.Note ?? strengObj.note ?? '–';
-        const korrS = strengObj.Korrektur ?? strengObj.korrektur ?? '–';
-        const noteN = nachObj.Note ?? nachObj.note ?? '–';
-        const korrN = nachObj.Korrektur ?? nachObj.korrektur ?? '–';
+        const { streng = {}, nachsichtig = {} } = parsed;
+        const noteS = streng.Note ?? streng.note ?? '–';
+        const korrS = streng.Korrektur ?? streng.korrektur ?? '–';
+        const noteN = nachsichtig.Note ?? nachsichtig.note ?? '–';
+        const korrN = nachsichtig.Korrektur ?? nachsichtig.korrektur ?? '–';
 
         resultsDiv.innerHTML = `
-          <details style="margin-bottom:1rem; padding:1rem; background:#fff5cc; border-radius:4px;">
-            <summary><strong>🛠️ Debug: Raw API-Antwort</strong></summary>
-            <pre>${JSON.stringify(json, null, 2)}</pre>
-          </details>
-        `;
-
-        resultsDiv.innerHTML += `
           <div class="box streng">
             <h2>Strenge Bewertung</h2>
             <p><strong>Note:</strong> ${noteS}</p>
