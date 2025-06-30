@@ -60,7 +60,7 @@
       transition: background 0.3s;
     }
     button:hover {
-      background: darken(var(--primary-color), 10%);
+      filter: brightness(0.9);
     }
     .results {
       margin-top: 2rem;
@@ -143,17 +143,25 @@
         });
         if (!resp.ok) throw new Error(`Fehler ${resp.status}`);
         const json = await resp.json();
+        console.log(json);
+
+        const streng = json.streng || json.Streng || {};
+        const nach = json.nachsichtig || json.Nachsichtig || {};
+        const noteS = streng.Note || streng.note || '–';
+        const korrS = streng.Korrektur || streng.korrektur || '–';
+        const noteN = nach.Note || nach.note || '–';
+        const korrN = nach.Korrektur || nach.korrektur || '–';
 
         resultsDiv.innerHTML = `
           <div class="box streng">
             <h2>Strenge Bewertung</h2>
-            <p><strong>Note:</strong> ${json.streng.Note}</p>
-            <pre>${json.streng.Korrektur}</pre>
+            <p><strong>Note:</strong> ${noteS}</p>
+            <pre>${korrS}</pre>
           </div>
           <div class="box nachsichtig">
             <h2>Nachsichtige Bewertung</h2>
-            <p><strong>Note:</strong> ${json.nachsichtig.Note}</p>
-            <pre>${json.nachsichtig.Korrektur}</pre>
+            <p><strong>Note:</strong> ${noteN}</p>
+            <pre>${korrN}</pre>
           </div>
         `;
       } catch (err) {
