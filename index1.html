@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Klassenarbeit Korrektur</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; }
+    form { display: grid; gap: 1rem; }
+    .results { margin-top: 2rem; }
+    .box { padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
+    .streng { background: #ffe5e5; border: 1px solid #ffaaaa; }
+    .nachsichtig { background: #e5ffe5; border: 1px solid #aaffaa; }
+    pre { white-space: pre-wrap; word-wrap: break-word; }
+  </style>
+</head>
+<body>
+
+  <h1>Klassenarbeit Korrektur</h1>
+
+  <form id="korrekturForm">
+    <label>
+      Datei (Bild/PDF):
+      <input type="file" name="data" accept="image/*,.pdf" required />
+    </label>
+
+    <label>
+      Klassenstufe:
+      <input type="text" name="klasse" placeholder="z. B. 7" required />
+    </label>
+
+    <label>
+      Fach:
+      <input type="text" name="fach" placeholder="z. B. Deutsch" required />
+    </label>
+
+    <button type="submit">Absenden und bewerten</button>
+  </form>
+
+  <div class="results" id="results"></div>
+
+  <script>
+    const form = document.getElementById('korrekturForm');
+    const resultsDiv = document.getElementById('results');
+    // → Hier deine Production-Webhook-URL eintragen:
+    const WEBHOOK_URL = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
+
+      const formData = new FormData(form);
+      try {
+        const resp = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          body: formData
+        });
+        if (!resp.ok) throw new Error(`Fehler ${resp.status}`);
+        const json = await resp.json();
+
+        // Ausgabe rendern
+        resultsDiv.innerHTML = `
+          <div class="box streng">
+            <h2>Strenge Bewertung</h2>
+            <p><strong>Note:</strong> ${json.streng.Note}</p>
+            <pre>${json.streng.Korrektur}</pre>
+          </div>
+          <div class="box nachsichtig">
+            <h2>Nachsichtige Bewertung</h2>
+            <p><strong>Note:</strong> ${json.nachsichtig.Note}</p>
+            <pre>${json.nachsichtig.Korrektur}</pre>
+          </div>
+        `;
+      } catch (err) {
+        resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
+        console.error(err);
+      }
+    });
+  </script>
+
+</body>
+</html>
