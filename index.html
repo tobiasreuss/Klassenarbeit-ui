@@ -1,5 +1,6 @@
+// Datei: src/components/KlassenarbeitKorrektur.jsx
 import React, { useState } from 'react';
-import './KlassenarbeitKorrektur.css'; // optional: deine CSS-Datei
+import './KlassenarbeitKorrektur.css';
 
 export default function KlassenarbeitKorrektur() {
   // Klassenstufen 1–12
@@ -8,76 +9,93 @@ export default function KlassenarbeitKorrektur() {
   // State für die ausgewählte Klasse
   const [selectedKlasse, setSelectedKlasse] = useState(klassenstufen[0]);
 
+  // State für Datei und weitere Felder
+  const [datei, setDatei] = useState(null);
+  const [fach, setFach] = useState('Deutsch');
+  const [aufgabe, setAufgabe] = useState('Diktat');
+
   // Handler für Klassenauswahl
   const handleKlasseChange = (e) => {
     setSelectedKlasse(Number(e.target.value));
   };
 
-  // Handler für Datei-Upload (optional weiterverarbeiten)
+  // Handler für Fachauswahl
+  const handleFachChange = (e) => {
+    setFach(e.target.value);
+  };
+
+  // Handler für Aufgabenart
+  const handleAufgabeChange = (e) => {
+    setAufgabe(e.target.value);
+  };
+
+  // Handler für Datei-Upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log('Datei ausgewählt:', file);
-    // TODO: Datei hochladen oder im State speichern
+    setDatei(file);
   };
 
   // Absende-Handler
   const handleSubmit = () => {
-    // TODO: Bewertung ausführen
-    console.log('Sende Daten:', { selectedKlasse });
+    // Logik zur Bewertung einfügen
+    console.log({ datei, selectedKlasse, fach, aufgabe });
+    alert(`Datei: ${datei?.name}\nKlasse: ${selectedKlasse}\nFach: ${fach}\nAufgabe: ${aufgabe}`);
   };
 
   return (
     <div className="klassenarbeit-korrektur">
       <h2>📄 Klassenarbeit Korrektur</h2>
 
-      {/* Datei-Upload */}
-      <label htmlFor="file">Klassenarbeit (Bild/PDF):</label>
-      <input
-        type="file"
-        id="file"
-        name="file"
-        accept="image/*,application/pdf"
-        onChange={handleFileChange}
-      />
+      <div className="feld">
+        <label htmlFor="file">Klassenarbeit (Bild/PDF):</label>
+        <input
+          type="file"
+          id="file"
+          name="file"
+          accept="image/*,application/pdf"
+          onChange={handleFileChange}
+        />
+      </div>
 
-      {/* Klassenauswahl */}
-      <label htmlFor="klasse">Klassenstufe:</label>
-      <select
-        id="klasse"
-        value={selectedKlasse}
-        onChange={handleKlasseChange}
-      >
-        {klassenstufen.map((stufe) => (
-          <option key={stufe} value={stufe}>
-            Klasse {stufe}
-          </option>
-        ))}
-      </select>
+      <div className="feld">
+        <label htmlFor="klasse">Klassenstufe:</label>
+        <select
+          id="klasse"
+          value={selectedKlasse}
+          onChange={handleKlasseChange}
+        >
+          {klassenstufen.map((stufe) => (
+            <option key={stufe} value={stufe}>
+              Klasse {stufe}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      {/* Fachauswahl */}
-      <label htmlFor="fach">Fach:</label>
-      <select id="fach" name="fach" defaultValue="Deutsch">
-        <option>Deutsch</option>
-        <option>Mathe</option>
-        <option>Englisch</option>
-        {/* Weitere Fächer ... */}
-      </select>
+      <div className="feld">
+        <label htmlFor="fach">Fach:</label>
+        <select id="fach" value={fach} onChange={handleFachChange}>
+          <option>Deutsch</option>
+          <option>Mathe</option>
+          <option>Englisch</option>
+          {/* Weitere Fächer ... */}
+        </select>
+      </div>
 
-      {/* Art der Aufgabe */}
-      <label htmlFor="aufgabe">Art der Aufgabe:</label>
-      <select id="aufgabe" name="aufgabe" defaultValue="Diktat">
-        <option>Diktat</option>
-        <option>Multiple Choice</option>
-        <option>Freitext</option>
-        {/* Weitere Arten ... */}
-      </select>
+      <div className="feld">
+        <label htmlFor="aufgabe">Art der Aufgabe:</label>
+        <select id="aufgabe" value={aufgabe} onChange={handleAufgabeChange}>
+          <option>Diktat</option>
+          <option>Multiple Choice</option>
+          <option>Freitext</option>
+          {/* Weitere Arten ... */}
+        </select>
+      </div>
 
-      {/* Absenden */}
-      <button type="button" onClick={handleSubmit}>
+      <button type="button" onClick={handleSubmit} className="submit">
         Absenden &amp; bewerten
       </button>
 
-      {/* Bewertungsergebnisse (Platzhalter) */}
       <div className="bewertung streng">
         <h3>Strenge Bewertung</h3>
         <p>Note: –</p>
@@ -88,4 +106,68 @@ export default function KlassenarbeitKorrektur() {
       </div>
     </div>
   );
+}
+
+/* Datei: src/components/KlassenarbeitKorrektur.css */
+.klassenarbeit-korrektur {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-family: sans-serif;
+}
+
+.klassenarbeit-korrektur h2 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.feld {
+  margin-bottom: 1rem;
+}
+
+.feld label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.feld input[type="file"],
+.feld select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.submit {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit:hover {
+  background: #0056b3;
+}
+
+.bewertung {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.bewertung.streng {
+  background: #ffe5e5;
+  border: 1px solid #ffcccc;
+}
+
+.bewertung.nachsichtig {
+  background: #e5ffe5;
+  border: 1px solid #ccffcc;
 }
