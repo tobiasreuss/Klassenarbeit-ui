@@ -1,4 +1,5 @@
-// Datei: src/components/KlassenarbeitKorrektur.jsx
+# Datei: src/components/KlassenarbeitKorrektur.jsx
+```jsx
 import React, { useState } from 'react';
 import './KlassenarbeitKorrektur.css';
 
@@ -6,40 +7,20 @@ export default function KlassenarbeitKorrektur() {
   // Klassenstufen 1–12
   const klassenstufen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-  // State für die ausgewählte Klasse
+  // States für die Formfelder
   const [selectedKlasse, setSelectedKlasse] = useState(klassenstufen[0]);
-
-  // State für Datei und weitere Felder
   const [datei, setDatei] = useState(null);
   const [fach, setFach] = useState('Deutsch');
   const [aufgabe, setAufgabe] = useState('Diktat');
 
-  // Handler für Klassenauswahl
-  const handleKlasseChange = (e) => {
-    setSelectedKlasse(Number(e.target.value));
-  };
-
-  // Handler für Fachauswahl
-  const handleFachChange = (e) => {
-    setFach(e.target.value);
-  };
-
-  // Handler für Aufgabenart
-  const handleAufgabeChange = (e) => {
-    setAufgabe(e.target.value);
-  };
-
-  // Handler für Datei-Upload
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setDatei(file);
-  };
-
-  // Absende-Handler
+  // Handler
+  const handleKlasseChange = (e) => setSelectedKlasse(Number(e.target.value));
+  const handleFachChange = (e) => setFach(e.target.value);
+  const handleAufgabeChange = (e) => setAufgabe(e.target.value);
+  const handleFileChange = (e) => setDatei(e.target.files[0]);
   const handleSubmit = () => {
-    // Logik zur Bewertung einfügen
-    console.log({ datei, selectedKlasse, fach, aufgabe });
-    alert(`Datei: ${datei?.name}\nKlasse: ${selectedKlasse}\nFach: ${fach}\nAufgabe: ${aufgabe}`);
+    // Hier kannst du deine Bewertungslogik einbauen
+    alert(`Datei: ${datei?.name || 'keine'}\nKlasse: ${selectedKlasse}\nFach: ${fach}\nAufgabe: ${aufgabe}`);
   };
 
   return (
@@ -92,7 +73,11 @@ export default function KlassenarbeitKorrektur() {
         </select>
       </div>
 
-      <button type="button" onClick={handleSubmit} className="submit">
+      <button
+        type="button"
+        onClick={handleSubmit}
+        className="submit"
+      >
         Absenden &amp; bewerten
       </button>
 
@@ -107,16 +92,20 @@ export default function KlassenarbeitKorrektur() {
     </div>
   );
 }
+```
 
-/* Datei: src/components/KlassenarbeitKorrektur.css */
+---
+
+# Datei: src/components/KlassenarbeitKorrektur.css
+```css
 .klassenarbeit-korrektur {
   max-width: 600px;
-  margin: 0 auto;
-  padding: 1rem;
+  margin: 2rem auto;
+  padding: 1.5rem;
   background: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  font-family: sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 .klassenarbeit-korrektur h2 {
@@ -131,7 +120,7 @@ export default function KlassenarbeitKorrektur() {
 .feld label {
   display: block;
   margin-bottom: 0.25rem;
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .feld input[type="file"],
@@ -143,10 +132,9 @@ export default function KlassenarbeitKorrektur() {
 }
 
 .submit {
-  display: inline-block;
   padding: 0.75rem 1.5rem;
   background: #007bff;
-  color: #fff;
+  color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -171,3 +159,25 @@ export default function KlassenarbeitKorrektur() {
   background: #e5ffe5;
   border: 1px solid #ccffcc;
 }
+```
+
+---
+
+# Datei: src/App.jsx  (Integration)
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import KlassenarbeitKorrektur from './components/KlassenarbeitKorrektur';
+
+function App() {
+  return (
+    <div>
+      <KlassenarbeitKorrektur />
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+Damit hast du **alle** relevanten Dateien für deine Anwendung. Du kannst sie direkt in deinem Projektordner anlegen und testen.
