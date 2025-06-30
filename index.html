@@ -154,10 +154,19 @@
       });
     });
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
-      const formData = new FormData(form);
+   form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  // Validierung erzwingen
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+
+  resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
+  const formData = new FormData(form);
+  // …
+});
 
       try {
         const resp = await fetch(WEBHOOK_URL, {
