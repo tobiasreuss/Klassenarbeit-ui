@@ -1,183 +1,208 @@
-# Datei: src/components/KlassenarbeitKorrektur.jsx
-```jsx
-import React, { useState } from 'react';
-import './KlassenarbeitKorrektur.css';
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Klassenarbeit Korrektur</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #e9f2fb;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
 
-export default function KlassenarbeitKorrektur() {
-  // Klassenstufen 1–12
-  const klassenstufen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
 
-  // States für die Formfelder
-  const [selectedKlasse, setSelectedKlasse] = useState(klassenstufen[0]);
-  const [datei, setDatei] = useState(null);
-  const [fach, setFach] = useState('Deutsch');
-  const [aufgabe, setAufgabe] = useState('Diktat');
+    h1 {
+      text-align: center;
+      color: #2a4d91;
+    }
 
-  // Handler
-  const handleKlasseChange = (e) => setSelectedKlasse(Number(e.target.value));
-  const handleFachChange = (e) => setFach(e.target.value);
-  const handleAufgabeChange = (e) => setAufgabe(e.target.value);
-  const handleFileChange = (e) => setDatei(e.target.files[0]);
-  const handleSubmit = () => {
-    // Hier kannst du deine Bewertungslogik einbauen
-    alert(`Datei: ${datei?.name || 'keine'}\nKlasse: ${selectedKlasse}\nFach: ${fach}\nAufgabe: ${aufgabe}`);
-  };
+    .beta-label {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: gold;
+      color: #333;
+      padding: 2px 8px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+    }
 
-  return (
-    <div className="klassenarbeit-korrektur">
-      <h2>📄 Klassenarbeit Korrektur</h2>
+    label {
+      font-weight: bold;
+      margin-top: 1rem;
+      display: block;
+    }
 
-      <div className="feld">
-        <label htmlFor="file">Klassenarbeit (Bild/PDF):</label>
-        <input
-          type="file"
-          id="file"
-          name="file"
-          accept="image/*,application/pdf"
-          onChange={handleFileChange}
-        />
-      </div>
+    select, input[type="file"], button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
 
-      <div className="feld">
-        <label htmlFor="klasse">Klassenstufe:</label>
-        <select
-          id="klasse"
-          value={selectedKlasse}
-          onChange={handleKlasseChange}
-        >
-          {klassenstufen.map((stufe) => (
-            <option key={stufe} value={stufe}>
-              Klasse {stufe}
-            </option>
-          ))}
-        </select>
-      </div>
+    button {
+      background-color: #4292f5;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
 
-      <div className="feld">
-        <label htmlFor="fach">Fach:</label>
-        <select id="fach" value={fach} onChange={handleFachChange}>
-          <option>Deutsch</option>
-          <option>Mathe</option>
-          <option>Englisch</option>
-          {/* Weitere Fächer ... */}
-        </select>
-      </div>
+    .results {
+      margin-top: 2rem;
+    }
 
-      <div className="feld">
-        <label htmlFor="aufgabe">Art der Aufgabe:</label>
-        <select id="aufgabe" value={aufgabe} onChange={handleAufgabeChange}>
-          <option>Diktat</option>
-          <option>Multiple Choice</option>
-          <option>Freitext</option>
-          {/* Weitere Arten ... */}
-        </select>
-      </div>
+    .box {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+    }
 
-      <button
-        type="button"
-        onClick={handleSubmit}
-        className="submit"
-      >
-        Absenden &amp; bewerten
-      </button>
+    .streng {
+      background: #fff1f1;
+      border-left: 6px solid #f19999;
+    }
 
-      <div className="bewertung streng">
-        <h3>Strenge Bewertung</h3>
-        <p>Note: –</p>
-      </div>
-      <div className="bewertung nachsichtig">
-        <h3>Nachsichtige Bewertung</h3>
-        <p>Note: –</p>
-      </div>
+    .nachsichtig {
+      background: #e9fdf0;
+      border-left: 6px solid #7ed6a7;
+    }
+
+    .preview {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .preview img {
+      width: 48%;
+      border: 4px solid white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="beta-label">Beta 0.1</div>
+
+  <div class="container">
+    <div class="preview">
+      <img src="images/OIP.jpg" alt="Fröhliche Lehrerin mit Schülern" />
+      <img src="images/OIP2.jpg" alt="Begeisterte Lehrerin motiviert Schüler" />
     </div>
-  );
-}
-```
 
----
+    <h1>📑 Klassenarbeit Korrektur</h1>
 
-# Datei: src/components/KlassenarbeitKorrektur.css
-```css
-.klassenarbeit-korrektur {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  font-family: Arial, sans-serif;
-}
+    <form id="korrekturForm">
+      <label>Klassenarbeit (Bild/PDF):
+        <input type="file" name="data" accept="image/*,.pdf" required />
+      </label>
 
-.klassenarbeit-korrektur h2 {
-  margin-bottom: 1rem;
-  color: #333;
-}
+      <label>Klassenstufe:
+        <select name="klasse" required>
+          <option value="">Bitte wählen</option>
+          ${[...Array(13).keys()].map(i => `<option value="${i+1}">Klasse ${i+1}</option>`).join('')}
+        </select>
+      </label>
 
-.feld {
-  margin-bottom: 1rem;
-}
+      <label>Fach:
+        <select name="fach" id="fach" required>
+          <option value="">Bitte wählen</option>
+          <option value="Deutsch">Deutsch</option>
+          <option value="Mathematik">Mathematik</option>
+          <option value="Philosophie">Philosophie</option>
+        </select>
+      </label>
 
-.feld label {
-  display: block;
-  margin-bottom: 0.25rem;
-  font-weight: bold;
-}
+      <label>Art der Aufgabe:
+        <select name="aufgabenart" id="aufgabenart" required>
+          <option value="">Bitte wählen</option>
+        </select>
+      </label>
 
-.feld input[type="file"],
-.feld select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
+      <button type="submit">Absenden & bewerten</button>
+    </form>
 
-.submit {
-  padding: 0.75rem 1.5rem;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
+    <div class="results" id="results"></div>
+  </div>
 
-.submit:hover {
-  background: #0056b3;
-}
+  <script>
+    const form = document.getElementById('korrekturForm');
+    const resultsDiv = document.getElementById('results');
+    const fachSelect = document.getElementById('fach');
+    const aufgabenartSelect = document.getElementById('aufgabenart');
 
-.bewertung {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border-radius: 4px;
-}
+    const aufgabenarten = {
+      Deutsch: ['Diktat', 'Aufsatz', 'Erörterung', 'Zusammenfassung', 'Bericht', 'Gedicht'],
+      Mathematik: ['Textaufgabe', 'Geometrie', 'Gleichungen', 'Zahlenrätsel'],
+      Philosophie: ['Textanalyse', 'Argumentation', 'Ethik-Diskussion']
+    };
 
-.bewertung.streng {
-  background: #ffe5e5;
-  border: 1px solid #ffcccc;
-}
+    fachSelect.addEventListener('change', () => {
+      const fach = fachSelect.value;
+      aufgabenartSelect.innerHTML = '<option value="">Bitte wählen</option>';
+      if (aufgabenarten[fach]) {
+        aufgabenarten[fach].forEach(a => {
+          const opt = document.createElement('option');
+          opt.value = a;
+          opt.textContent = a;
+          aufgabenartSelect.appendChild(opt);
+        });
+      }
+    });
 
-.bewertung.nachsichtig {
-  background: #e5ffe5;
-  border: 1px solid #ccffcc;
-}
-```
+    const WEBHOOK_URL = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
 
----
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
 
-# Datei: src/App.jsx  (Integration)
-```jsx
-import React from 'react';
-import ReactDOM from 'react-dom';
-import KlassenarbeitKorrektur from './components/KlassenarbeitKorrektur';
+      const formData = new FormData(form);
+      try {
+        const resp = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          body: formData
+        });
+        if (!resp.ok) throw new Error(`Fehler ${resp.status}`);
+        const json = await resp.json();
 
-function App() {
-  return (
-    <div>
-      <KlassenarbeitKorrektur />
-    </div>
-  );
-}
+        resultsDiv.innerHTML = `
+          <div class="box streng">
+            <h2>Strenge Bewertung</h2>
+            <p><strong>Note:</strong> ${json.streng?.Note || '–'}</p>
+            <pre>${json.streng?.Korrektur || '–'}</pre>
+          </div>
+          <div class="box nachsichtig">
+            <h2>Nachsichtige Bewertung</h2>
+            <p><strong>Note:</strong> ${json.nachsichtig?.Note || '–'}</p>
+            <pre>${json.nachsichtig?.Korrektur || '–'}</pre>
+          </div>
+        `;
+      } catch (err) {
+        resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
+        console.error(err);
+      }
+    });
+  </script>
 
-ReactDOM.render(<App />, document.getElementById('root'));
-```
-
-Damit hast du **alle** relevanten Dateien für deine Anwendung. Du kannst sie direkt in deinem Projektordner anlegen und testen.
+</body>
+</html>
