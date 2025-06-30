@@ -47,13 +47,14 @@
       font-weight: bold;
     }
     .hero-images {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
     .hero-images img {
-      flex: 1;
-      max-height: 200px;
+      width: 100%;
+      height: auto;
       object-fit: cover;
       border-radius: var(--box-radius);
       box-shadow: var(--box-shadow);
@@ -107,6 +108,8 @@
     <div class="hero-images">
       <img src="https://images.pexels.com/photos/4143794/pexels-photo-4143794.jpeg" alt="Fröhliche Lehrerin mit Schülern" />
       <img src="https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg" alt="Begeisterte Lehrerin motiviert Schüler" />
+      <img src="https://images.pexels.com/photos/5212358/pexels-photo-5212358.jpeg" alt="Lehrerin unterstützt Schüler" />
+      <img src="https://images.pexels.com/photos/5212782/pexels-photo-5212782.jpeg" alt="Lehrerin hilft Schülerin beim Schreiben" />
     </div>
     <h1>📝 Klassenarbeit Korrektur</h1>
     <form id="korrekturForm">
