@@ -1,208 +1,91 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <title>Klassenarbeit Korrektur</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body {
-      font-family: sans-serif;
-      background-color: #e9f2fb;
-      margin: 0;
-      padding: 2rem;
-      display: flex;
-      justify-content: center;
-    }
+import React, { useState } from 'react';
+import './KlassenarbeitKorrektur.css'; // optional: deine CSS-Datei
 
-    .container {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      max-width: 500px;
-      width: 100%;
-    }
+export default function KlassenarbeitKorrektur() {
+  // Klassenstufen 1–12
+  const klassenstufen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-    h1 {
-      text-align: center;
-      color: #2a4d91;
-    }
+  // State für die ausgewählte Klasse
+  const [selectedKlasse, setSelectedKlasse] = useState(klassenstufen[0]);
 
-    .beta-label {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: gold;
-      color: #333;
-      padding: 2px 8px;
-      font-size: 0.8rem;
-      border-radius: 4px;
-    }
+  // Handler für Klassenauswahl
+  const handleKlasseChange = (e) => {
+    setSelectedKlasse(Number(e.target.value));
+  };
 
-    label {
-      font-weight: bold;
-      margin-top: 1rem;
-      display: block;
-    }
+  // Handler für Datei-Upload (optional weiterverarbeiten)
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    console.log('Datei ausgewählt:', file);
+    // TODO: Datei hochladen oder im State speichern
+  };
 
-    select, input[type="file"], button {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.3rem;
-      margin-bottom: 1rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
+  // Absende-Handler
+  const handleSubmit = () => {
+    // TODO: Bewertung ausführen
+    console.log('Sende Daten:', { selectedKlasse });
+  };
 
-    button {
-      background-color: #4292f5;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-    }
+  return (
+    <div className="klassenarbeit-korrektur">
+      <h2>📄 Klassenarbeit Korrektur</h2>
 
-    .results {
-      margin-top: 2rem;
-    }
+      {/* Datei-Upload */}
+      <label htmlFor="file">Klassenarbeit (Bild/PDF):</label>
+      <input
+        type="file"
+        id="file"
+        name="file"
+        accept="image/*,application/pdf"
+        onChange={handleFileChange}
+      />
 
-    .box {
-      padding: 1rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      border: 1px solid #ddd;
-    }
+      {/* Klassenauswahl */}
+      <label htmlFor="klasse">Klassenstufe:</label>
+      <select
+        id="klasse"
+        value={selectedKlasse}
+        onChange={handleKlasseChange}
+      >
+        {klassenstufen.map((stufe) => (
+          <option key={stufe} value={stufe}>
+            Klasse {stufe}
+          </option>
+        ))}
+      </select>
 
-    .streng {
-      background: #fff1f1;
-      border-left: 6px solid #f19999;
-    }
+      {/* Fachauswahl */}
+      <label htmlFor="fach">Fach:</label>
+      <select id="fach" name="fach" defaultValue="Deutsch">
+        <option>Deutsch</option>
+        <option>Mathe</option>
+        <option>Englisch</option>
+        {/* Weitere Fächer ... */}
+      </select>
 
-    .nachsichtig {
-      background: #e9fdf0;
-      border-left: 6px solid #7ed6a7;
-    }
+      {/* Art der Aufgabe */}
+      <label htmlFor="aufgabe">Art der Aufgabe:</label>
+      <select id="aufgabe" name="aufgabe" defaultValue="Diktat">
+        <option>Diktat</option>
+        <option>Multiple Choice</option>
+        <option>Freitext</option>
+        {/* Weitere Arten ... */}
+      </select>
 
-    .preview {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
+      {/* Absenden */}
+      <button type="button" onClick={handleSubmit}>
+        Absenden &amp; bewerten
+      </button>
 
-    .preview img {
-      width: 48%;
-      border: 4px solid white;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      object-fit: cover;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="beta-label">Beta 0.1</div>
-
-  <div class="container">
-    <div class="preview">
-      <img src="images/OIP.jpg" alt="Fröhliche Lehrerin mit Schülern" />
-      <img src="images/OIP2.jpg" alt="Begeisterte Lehrerin motiviert Schüler" />
+      {/* Bewertungsergebnisse (Platzhalter) */}
+      <div className="bewertung streng">
+        <h3>Strenge Bewertung</h3>
+        <p>Note: –</p>
+      </div>
+      <div className="bewertung nachsichtig">
+        <h3>Nachsichtige Bewertung</h3>
+        <p>Note: –</p>
+      </div>
     </div>
-
-    <h1>📑 Klassenarbeit Korrektur</h1>
-
-    <form id="korrekturForm">
-      <label>Klassenarbeit (Bild/PDF):
-        <input type="file" name="data" accept="image/*,.pdf" required />
-      </label>
-
-      <label>Klassenstufe:
-        <select name="klasse" required>
-          <option value="">Bitte wählen</option>
-          ${[...Array(13).keys()].map(i => `<option value="${i+1}">Klasse ${i+1}</option>`).join('')}
-        </select>
-      </label>
-
-      <label>Fach:
-        <select name="fach" id="fach" required>
-          <option value="">Bitte wählen</option>
-          <option value="Deutsch">Deutsch</option>
-          <option value="Mathematik">Mathematik</option>
-          <option value="Philosophie">Philosophie</option>
-        </select>
-      </label>
-
-      <label>Art der Aufgabe:
-        <select name="aufgabenart" id="aufgabenart" required>
-          <option value="">Bitte wählen</option>
-        </select>
-      </label>
-
-      <button type="submit">Absenden & bewerten</button>
-    </form>
-
-    <div class="results" id="results"></div>
-  </div>
-
-  <script>
-    const form = document.getElementById('korrekturForm');
-    const resultsDiv = document.getElementById('results');
-    const fachSelect = document.getElementById('fach');
-    const aufgabenartSelect = document.getElementById('aufgabenart');
-
-    const aufgabenarten = {
-      Deutsch: ['Diktat', 'Aufsatz', 'Erörterung', 'Zusammenfassung', 'Bericht', 'Gedicht'],
-      Mathematik: ['Textaufgabe', 'Geometrie', 'Gleichungen', 'Zahlenrätsel'],
-      Philosophie: ['Textanalyse', 'Argumentation', 'Ethik-Diskussion']
-    };
-
-    fachSelect.addEventListener('change', () => {
-      const fach = fachSelect.value;
-      aufgabenartSelect.innerHTML = '<option value="">Bitte wählen</option>';
-      if (aufgabenarten[fach]) {
-        aufgabenarten[fach].forEach(a => {
-          const opt = document.createElement('option');
-          opt.value = a;
-          opt.textContent = a;
-          aufgabenartSelect.appendChild(opt);
-        });
-      }
-    });
-
-    const WEBHOOK_URL = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
-
-      const formData = new FormData(form);
-      try {
-        const resp = await fetch(WEBHOOK_URL, {
-          method: 'POST',
-          body: formData
-        });
-        if (!resp.ok) throw new Error(`Fehler ${resp.status}`);
-        const json = await resp.json();
-
-        resultsDiv.innerHTML = `
-          <div class="box streng">
-            <h2>Strenge Bewertung</h2>
-            <p><strong>Note:</strong> ${json.streng?.Note || '–'}</p>
-            <pre>${json.streng?.Korrektur || '–'}</pre>
-          </div>
-          <div class="box nachsichtig">
-            <h2>Nachsichtige Bewertung</h2>
-            <p><strong>Note:</strong> ${json.nachsichtig?.Note || '–'}</p>
-            <pre>${json.nachsichtig?.Korrektur || '–'}</pre>
-          </div>
-        `;
-      } catch (err) {
-        resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
-        console.error(err);
-      }
-    });
-  </script>
-
-</body>
-</html>
+  );
+}
