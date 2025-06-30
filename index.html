@@ -8,6 +8,7 @@
     :root {
       --primary-color: #4a90e2;
       --accent-color: #50e3c2;
+      --hero-bg: #e3f2fd;
       --bg-light: #f9f9f9;
       --text-dark: #333;
       --badge-bg: #ffeb3b;
@@ -17,7 +18,7 @@
     }
     * { box-sizing: border-box; }
     body {
-      background: var(--bg-light);
+      background: var(--hero-bg);
       color: var(--text-dark);
       font-family: 'Segoe UI', Tahoma, sans-serif;
       margin: 0;
@@ -44,6 +45,18 @@
       border-radius: var(--box-radius);
       font-size: 0.875rem;
       font-weight: bold;
+    }
+    .hero-images {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .hero-images img {
+      flex: 1;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: var(--box-radius);
+      box-shadow: var(--box-shadow);
     }
     h1 {
       margin-top: 0;
@@ -91,6 +104,10 @@
 <body>
   <div class="container">
     <div class="badge">Beta 0.1</div>
+    <div class="hero-images">
+      <img src="https://images.pexels.com/photos/4143794/pexels-photo-4143794.jpeg" alt="Fröhliche Lehrerin mit Schülern" />
+      <img src="https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg" alt="Begeisterte Lehrerin motiviert Schüler" />
+    </div>
     <h1>📝 Klassenarbeit Korrektur</h1>
     <form id="korrekturForm">
       <label>Klassenarbeit (Bild/PDF):
@@ -126,40 +143,29 @@
     // Dropdown-Klassenstufen befüllen
     const klasseSel = document.getElementById('klasseSelect');
     for (let i = 1; i <= 13; i++) {
-      const opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = `Klasse ${i}`;
-      klasseSel.appendChild(opt);
+      const opt = document.createElement('option'); opt.value = i;
+      opt.textContent = `Klasse ${i}`; klasseSel.appendChild(opt);
     }
-
     const form = document.getElementById('korrekturForm');
     const resultsDiv = document.getElementById('results');
     const WEBHOOK_URL = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
-
     form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      resultsDiv.innerHTML = '<div class="spinner"></div>';
-
+      e.preventDefault(); resultsDiv.innerHTML = '<div class="spinner"></div>';
       const formData = new FormData(form);
       formData.append('typ', formData.get('typ'));
       try {
-        const resp = await fetch(WEBHOOK_URL, {
-          method: 'POST',
-          body: formData
-        });
+        const resp = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
         if (!resp.ok) throw new Error(`Fehler ${resp.status}`);
         const wrapper = await resp.json();
         console.log('API raw:', wrapper);
         const content = wrapper.message?.content || wrapper.content;
         const parsed = JSON.parse(content);
         console.log('Parsed JSON:', parsed);
-
         const { streng = {}, nachsichtig = {} } = parsed;
         const noteS = streng.Note ?? streng.note ?? '–';
         const korrS = streng.Korrektur ?? streng.korrektur ?? '–';
         const noteN = nachsichtig.Note ?? nachsichtig.note ?? '–';
         const korrN = nachsichtig.Korrektur ?? nachsichtig.korrektur ?? '–';
-
         resultsDiv.innerHTML = `
           <div class="box streng">
             <h2>Strenge Bewertung (${formData.get('typ')})</h2>
