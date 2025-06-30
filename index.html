@@ -7,125 +7,101 @@
   <style>
     body {
       font-family: sans-serif;
-      background-color: #e9f2fb;
+      background: #eaf3fa;
       margin: 0;
       padding: 2rem;
-      display: flex;
-      justify-content: center;
     }
-
     .container {
-      background: white;
+      max-width: 600px;
+      margin: 0 auto;
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      max-width: 500px;
-      width: 100%;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
     }
-
-    h1 {
-      text-align: center;
-      color: #2a4d91;
-    }
-
-    .beta-label {
+    .beta-badge {
       position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: gold;
-      color: #333;
-      padding: 2px 8px;
-      font-size: 0.8rem;
-      border-radius: 4px;
-    }
-
-    label {
-      font-weight: bold;
-      margin-top: 1rem;
-      display: block;
-    }
-
-    select, input[type="file"], button {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.3rem;
-      margin-bottom: 1rem;
+      top: 10px;
+      right: 10px;
+      background-color: #ffdd00;
+      padding: 4px 10px;
       border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-
-    button {
-      background-color: #4292f5;
-      color: white;
+      font-size: 0.8rem;
       font-weight: bold;
-      cursor: pointer;
-      border: none;
     }
-
+    .bilder {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .bilder img {
+      width: 48%;
+      border-radius: 8px;
+      border: 4px solid white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    h1 {
+      font-size: 1.6rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    form {
+      display: grid;
+      gap: 1rem;
+    }
     .results {
       margin-top: 2rem;
     }
-
     .box {
       padding: 1rem;
-      border-radius: 8px;
+      border-radius: 4px;
       margin-bottom: 1rem;
-      border: 1px solid #ddd;
     }
-
     .streng {
-      background: #fff1f1;
-      border-left: 6px solid #f19999;
+      background: #ffe5e5;
+      border: 1px solid #ffaaaa;
     }
-
     .nachsichtig {
-      background: #e9fdf0;
-      border-left: 6px solid #7ed6a7;
+      background: #e5ffe5;
+      border: 1px solid #aaffaa;
     }
-
-    .preview {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    .preview img {
-      width: 48%;
-      border: 4px solid white;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      object-fit: cover;
+    button {
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.75rem;
+      font-size: 1rem;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-
-  <div class="beta-label">Beta 0.1</div>
-
   <div class="container">
-    <div class="preview">
-      <img src="images/OIP.jpg" alt="Fröhliche Lehrerin mit Schülern" />
-      <img src="images/OIP2.jpg" alt="Begeisterte Lehrerin motiviert Schüler" />
+    <span class="beta-badge">Beta 0.1</span>
+
+    <div class="bilder">
+      <img src="images/OIP.jpg" alt="Fröhliche Lehrerin mit Schülern">
+      <img src="images/OIP2.jpg" alt="Begeisterte Lehrerin motiviert Schüler">
     </div>
 
-    <h1>📑 Klassenarbeit Korrektur</h1>
+    <h1>📄 Klassenarbeit Korrektur</h1>
 
     <form id="korrekturForm">
-      <label>Klassenarbeit (Bild/PDF):
+      <label>
+        Klassenarbeit (Bild/PDF):
         <input type="file" name="data" accept="image/*,.pdf" required />
       </label>
 
-      <label>Klassenstufe:
-        <select name="klasse" required>
-          <option value="">Bitte wählen</option>
-          ${[...Array(13).keys()].map(i => `<option value="${i+1}">Klasse ${i+1}</option>`).join('')}
-        </select>
+      <label>
+        Klassenstufe:
+        <select name="klasse" id="klasseSelect" required></select>
       </label>
 
-      <label>Fach:
-        <select name="fach" id="fach" required>
+      <label>
+        Fach:
+        <select name="fach" id="fachSelect" required>
           <option value="">Bitte wählen</option>
           <option value="Deutsch">Deutsch</option>
           <option value="Mathematik">Mathematik</option>
@@ -133,8 +109,9 @@
         </select>
       </label>
 
-      <label>Art der Aufgabe:
-        <select name="aufgabenart" id="aufgabenart" required>
+      <label>
+        Art der Aufgabe:
+        <select name="aufgabe" id="aufgabeSelect" required>
           <option value="">Bitte wählen</option>
         </select>
       </label>
@@ -146,37 +123,42 @@
   </div>
 
   <script>
+    const klasseSelect = document.getElementById('klasseSelect');
+    const fachSelect = document.getElementById('fachSelect');
+    const aufgabeSelect = document.getElementById('aufgabeSelect');
     const form = document.getElementById('korrekturForm');
     const resultsDiv = document.getElementById('results');
-    const fachSelect = document.getElementById('fach');
-    const aufgabenartSelect = document.getElementById('aufgabenart');
+    const WEBHOOK_URL = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
 
-    const aufgabenarten = {
+    for (let i = 1; i <= 13; i++) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `Klasse ${i}`;
+      klasseSelect.appendChild(opt);
+    }
+
+    const aufgabenByFach = {
       Deutsch: ['Diktat', 'Aufsatz', 'Erörterung', 'Zusammenfassung', 'Bericht', 'Gedicht'],
-      Mathematik: ['Textaufgabe', 'Geometrie', 'Gleichungen', 'Zahlenrätsel'],
-      Philosophie: ['Textanalyse', 'Argumentation', 'Ethik-Diskussion']
+      Mathematik: ['Textaufgabe', 'Rechenweg', 'Beweis', 'Formel umstellen'],
+      Philosophie: ['Argumentation', 'Interpretation', 'Essay', 'Begriffsanalyse']
     };
 
     fachSelect.addEventListener('change', () => {
       const fach = fachSelect.value;
-      aufgabenartSelect.innerHTML = '<option value="">Bitte wählen</option>';
-      if (aufgabenarten[fach]) {
-        aufgabenarten[fach].forEach(a => {
-          const opt = document.createElement('option');
-          opt.value = a;
-          opt.textContent = a;
-          aufgabenartSelect.appendChild(opt);
-        });
-      }
+      aufgabeSelect.innerHTML = '<option value="">Bitte wählen</option>';
+      (aufgabenByFach[fach] || []).forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a;
+        opt.textContent = a;
+        aufgabeSelect.appendChild(opt);
+      });
     });
-
-    const WEBHOOK_URL = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
-
       const formData = new FormData(form);
+
       try {
         const resp = await fetch(WEBHOOK_URL, {
           method: 'POST',
@@ -188,13 +170,13 @@
         resultsDiv.innerHTML = `
           <div class="box streng">
             <h2>Strenge Bewertung</h2>
-            <p><strong>Note:</strong> ${json.streng?.Note || '–'}</p>
-            <pre>${json.streng?.Korrektur || '–'}</pre>
+            <p><strong>Note:</strong> ${json?.streng?.Note || '–'}</p>
+            <pre>${json?.streng?.Korrektur || '–'}</pre>
           </div>
           <div class="box nachsichtig">
             <h2>Nachsichtige Bewertung</h2>
-            <p><strong>Note:</strong> ${json.nachsichtig?.Note || '–'}</p>
-            <pre>${json.nachsichtig?.Korrektur || '–'}</pre>
+            <p><strong>Note:</strong> ${json?.nachsichtig?.Note || '–'}</p>
+            <pre>${json?.nachsichtig?.Korrektur || '–'}</pre>
           </div>
         `;
       } catch (err) {
@@ -203,6 +185,5 @@
       }
     });
   </script>
-
 </body>
 </html>
