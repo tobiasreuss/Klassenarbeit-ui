@@ -92,6 +92,16 @@
         <option value="Englisch">Englisch</option>
         <option value="Philosophie">Philosophie</option>
       </select>
+      <label>Art der Aufgabe:</label>
+      <select name="typ" required>
+        <option value="">Bitte wählen</option>
+        <option value="Diktat">Diktat</option>
+        <option value="Aufsatz">Aufsatz</option>
+        <option value="Erörterung">Erörterung</option>
+        <option value="Zusammenfassung">Zusammenfassung</option>
+        <option value="Bericht">Bericht</option>
+        <option value="Gedicht">Gedicht</option>
+      </select>
       <button type="submit">Absenden & bewerten</button>
     </form>
     <div id="results" class="results"></div>
@@ -114,13 +124,13 @@
       resultsDiv.innerHTML = '<div class="spinner"></div>';
 
       const formData = new FormData(form);
+      formData.append('typ', formData.get('typ')); // sicherstellen, dass typ mitgeht
       try {
         const resp = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
         if (!resp.ok) throw new Error(`Fehler ${resp.status}`);
         const wrapper = await resp.json();
         console.log('API raw:', wrapper);
-        // Inhalt parsen
-        const content = wrapper.message?.content || wrapper.content || JSON.stringify(wrapper);
+        const content = wrapper.message?.content || wrapper.content;
         const parsed = JSON.parse(content);
         console.log('Parsed JSON:', parsed);
 
@@ -132,12 +142,12 @@
 
         resultsDiv.innerHTML = `
           <div class="box streng">
-            <h2>Strenge Bewertung</h2>
+            <h2>Strenge Bewertung (${formData.get('typ')})</h2>
             <p><strong>Note:</strong> ${noteS}</p>
             <pre>${korrS}</pre>
           </div>
           <div class="box nachsichtig">
-            <h2>Nachsichtige Bewertung</h2>
+            <h2>Nachsichtige Bewertung (${formData.get('typ')})</h2>
             <p><strong>Note:</strong> ${noteN}</p>
             <pre>${korrN}</pre>
           </div>
