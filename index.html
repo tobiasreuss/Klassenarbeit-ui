@@ -5,178 +5,154 @@
   <title>Klassenarbeit Korrektur</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root {
-      --primary-color: #4a90e2;
-      --accent-color: #50e3c2;
-      --hero-bg: #e3f2fd;
-      --bg-light: #f9f9f9;
-      --text-dark: #333;
-      --badge-bg: #ffeb3b;
-      --badge-color: #333;
-      --box-radius: 8px;
-      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    * { box-sizing: border-box; }
     body {
-      background: var(--hero-bg);
-      color: var(--text-dark);
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      margin: 0;
-      padding: 2rem;
-      display: flex;
-      justify-content: center;
-    }
-    .container {
-      position: relative;
-      background: #fff;
-      padding: 2rem;
-      border-radius: var(--box-radius);
-      box-shadow: var(--box-shadow);
-      width: 100%;
+      font-family: sans-serif;
       max-width: 600px;
+      margin: 2rem auto;
+      background-color: #e8f0fb;
+      padding: 1rem;
+      border-radius: 8px;
     }
-    .badge {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: var(--badge-bg);
-      color: var(--badge-color);
-      padding: 0.25rem 0.5rem;
-      border-radius: var(--box-radius);
-      font-size: 0.875rem;
-      font-weight: bold;
-    }
-    .hero-images {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .hero-images img {
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-      border-radius: var(--box-radius);
-      box-shadow: var(--box-shadow);
-    }
+    form { display: grid; gap: 1rem; }
     h1 {
-      margin-top: 0;
-      color: var(--primary-color);
-      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.8rem;
+      color: #3366cc;
     }
-    form {
-      display: grid;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    label { font-weight: bold; }
-    input[type="file"], select, button {
-      width: 100%; padding: 0.75rem; font-size: 1rem;
-      border: 1px solid #ccc; border-radius: var(--box-radius);
-    }
-    button {
-      background: var(--primary-color); color: #fff;
-      border: none; cursor: pointer; transition: filter 0.3s;
-    }
-    button:hover { filter: brightness(0.9); }
     .results { margin-top: 2rem; }
     .box {
-      padding: 1rem; border-radius: var(--box-radius);
-      box-shadow: var(--box-shadow); margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      background: #f5f5f5;
     }
-    .streng { border-left: 6px solid #e74c3c; background: #fdecea; }
-    .nachsichtig { border-left: 6px solid #27ae60; background: #e8f8f5; }
-    pre {
-      white-space: pre-wrap; word-wrap: break-word;
-      background: #fafafa; padding: 0.5rem;
-      border-radius: var(--box-radius); overflow-x: auto;
+    .streng {
+      background: #ffe5e5;
+      border-left: 5px solid #ff6b6b;
     }
-    .spinner {
-      border: 4px solid #f3f3f3; border-top: 4px solid var(--accent-color);
-      border-radius: 50%; width: 2rem; height: 2rem;
-      animation: spin 1s linear infinite; margin: 2rem auto;
+    .nachsichtig {
+      background: #e5ffe5;
+      border-left: 5px solid #4caf50;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+    .header img {
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    }
+    .badge {
+      background-color: gold;
+      padding: 2px 6px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border-radius: 4px;
+      margin-left: 0.5rem;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="badge">Beta 0.11</div>
-    <div class="hero-images">
-      <img src="/mnt/data/OIP.jpg" alt="Fröhliche Lehrerin mit Schülern" />
-      <img src="/mnt/data/OIP2.jpg" alt="Begeisterte Lehrerin motiviert Schüler" />
-    </div>
-    <h1>📝 Klassenarbeit Korrektur</h1>
-    <form id="korrekturForm">
-      <label>Klassenarbeit (Bild/PDF):
-        <input type="file" name="data" accept="image/*,.pdf" required />
-      </label>
-      <label>Klassenstufe:</label>
-      <select id="klasseSelect" name="klasse" required>
+
+  <div class="header">
+    <img src="images/OIP.jpg" alt="Fröhliche Lehrerin mit Schülern" />
+    <img src="images/OIP2.jpg" alt="Begeisterte Lehrerin motiviert Schüler" />
+    <span class="badge">Beta 0.11</span>
+  </div>
+
+  <h1>📑 Klassenarbeit Korrektur</h1>
+
+  <form id="korrekturForm">
+    <label>
+      Klassenarbeit (Bild/PDF):
+      <input type="file" name="data" accept="image/*,.pdf" required />
+    </label>
+
+    <label>
+      Klassenstufe:
+      <select name="klasse" required>
         <option value="">Bitte wählen</option>
+        ${[...Array(13)].map((_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
       </select>
-      <label>Fach:</label>
-      <select name="fach" required>
+    </label>
+
+    <label>
+      Fach:
+      <select name="fach" id="fach" required>
         <option value="">Bitte wählen</option>
         <option value="Deutsch">Deutsch</option>
         <option value="Mathematik">Mathematik</option>
-        <option value="Englisch">Englisch</option>
         <option value="Philosophie">Philosophie</option>
       </select>
-      <label>Art der Aufgabe:</label>
-      <select name="typ" required>
+    </label>
+
+    <label>
+      Art der Aufgabe:
+      <select name="aufgabentyp" id="aufgabentyp" required>
         <option value="">Bitte wählen</option>
-        <option value="Diktat">Diktat</option>
-        <option value="Aufsatz">Aufsatz</option>
-        <option value="Erörterung">Erörterung</option>
-        <option value="Zusammenfassung">Zusammenfassung</option>
-        <option value="Bericht">Bericht</option>
-        <option value="Gedicht">Gedicht</option>
       </select>
-      <button type="submit">Absenden & bewerten</button>
-    </form>
-    <div id="results" class="results"></div>
-  </div>
+    </label>
+
+    <button type="submit">Absenden & bewerten</button>
+  </form>
+
+  <div class="results" id="results"></div>
+
   <script>
-    // Dropdown-Klassenstufen befüllen
-    const klasseSel = document.getElementById('klasseSelect');
-    for (let i = 1; i <= 13; i++) {
-      const opt = document.createElement('option'); opt.value = i;
-      opt.textContent = `Klasse ${i}`; klasseSel.appendChild(opt);
-    }
+    const aufgabenMap = {
+      Deutsch: ["Diktat", "Aufsatz", "Erörterung", "Zusammenfassung", "Bericht", "Gedicht"],
+      Mathematik: ["Textaufgabe", "Rechenweg erklären", "Sachaufgabe", "Beweis"],
+      Philosophie: ["Argumentation", "Textinterpretation", "Essay", "Diskussion"]
+    };
+
+    const fachSelect = document.getElementById('fach');
+    const typSelect = document.getElementById('aufgabentyp');
+
+    fachSelect.addEventListener('change', () => {
+      const fach = fachSelect.value;
+      typSelect.innerHTML = '<option value="">Bitte wählen</option>';
+      if (aufgabenMap[fach]) {
+        aufgabenMap[fach].forEach(typ => {
+          const option = document.createElement('option');
+          option.value = typ;
+          option.textContent = typ;
+          typSelect.appendChild(option);
+        });
+      }
+    });
+
     const form = document.getElementById('korrekturForm');
     const resultsDiv = document.getElementById('results');
     const WEBHOOK_URL = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
+
     form.addEventListener('submit', async (e) => {
-      e.preventDefault(); resultsDiv.innerHTML = '<div class="spinner"></div>';
+      e.preventDefault();
+      resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
+
       const formData = new FormData(form);
-      formData.append('typ', formData.get('typ'));
       try {
-        const resp = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
+        const resp = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          body: formData
+        });
         if (!resp.ok) throw new Error(`Fehler ${resp.status}`);
-        const wrapper = await resp.json();
-        console.log('API raw:', wrapper);
-        const content = wrapper.message?.content || wrapper.content;
-        const parsed = JSON.parse(content);
-        console.log('Parsed JSON:', parsed);
-        const { streng = {}, nachsichtig = {} } = parsed;
-        const noteS = streng.Note ?? streng.note ?? '–';
-        const korrS = streng.Korrektur ?? streng.korrektur ?? '–';
-        const noteN = nachsichtig.Note ?? nachsichtig.note ?? '–';
-        const korrN = nachsichtig.Korrektur ?? nachsichtig.korrektur ?? '–';
+        const json = await resp.json();
+
         resultsDiv.innerHTML = `
           <div class="box streng">
-            <h2>Strenge Bewertung (${formData.get('typ')})</h2>
-            <p><strong>Note:</strong> ${noteS}</p>
-            <pre>${korrS}</pre>
+            <h2>Strenge Bewertung</h2>
+            <p><strong>Note:</strong> ${json.streng?.Note || "-"}</p>
+            <pre>${json.streng?.Korrektur || "-"}</pre>
           </div>
           <div class="box nachsichtig">
-            <h2>Nachsichtige Bewertung (${formData.get('typ')})</h2>
-            <p><strong>Note:</strong> ${noteN}</p>
-            <pre>${korrN}</pre>
+            <h2>Nachsichtige Bewertung</h2>
+            <p><strong>Note:</strong> ${json.nachsichtig?.Note || "-"}</p>
+            <pre>${json.nachsichtig?.Korrektur || "-"}</pre>
           </div>
         `;
       } catch (err) {
@@ -185,5 +161,6 @@
       }
     });
   </script>
+
 </body>
 </html>
