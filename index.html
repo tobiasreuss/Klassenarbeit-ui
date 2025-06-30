@@ -57,7 +57,7 @@
       color: #fff;
       border: none;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: filter 0.3s;
     }
     button:hover {
       filter: brightness(0.9);
@@ -110,9 +110,8 @@
         <input type="file" name="data" accept="image/*,.pdf" required />
       </label>
       <label>Klassenstufe:</label>
-      <select name="klasse" required>
+      <select id="klasseSelect" name="klasse" required>
         <option value="">Bitte wählen</option>
-        ${Array.from({length:13},(_,i)=>i+1).map(i=>`<option value="${i}">Klasse ${i}</option>`).join('')}
       </select>
       <label>Fach:</label>
       <select name="fach" required>
@@ -127,6 +126,15 @@
     <div class="results" id="results"></div>
   </div>
   <script>
+    // Dropdown-Klassenstufen dynamisch befüllen
+    const klasseSel = document.getElementById('klasseSelect');
+    for (let i = 1; i <= 13; i++) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `Klasse ${i}`;
+      klasseSel.appendChild(opt);
+    }
+
     const form = document.getElementById('korrekturForm');
     const resultsDiv = document.getElementById('results');
     const WEBHOOK_URL = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
@@ -145,12 +153,12 @@
         const json = await resp.json();
         console.log(json);
 
-        const streng = json.streng || json.Streng || {};
-        const nach = json.nachsichtig || json.Nachsichtig || {};
-        const noteS = streng.Note || streng.note || '–';
-        const korrS = streng.Korrektur || streng.korrektur || '–';
-        const noteN = nach.Note || nach.note || '–';
-        const korrN = nach.Korrektur || nach.korrektur || '–';
+        const strengObj = json.streng || json.Streng || {};
+        const nachObj = json.nachsichtig || json.Nachsichtig || {};
+        const noteS = strengObj.Note ?? strengObj.note ?? '–';
+        const korrS = strengObj.Korrektur ?? strengObj.korrektur ?? '–';
+        const noteN = nachObj.Note ?? nachObj.note ?? '–';
+        const korrN = nachObj.Korrektur ?? nachObj.korrektur ?? '–';
 
         resultsDiv.innerHTML = `
           <div class="box streng">
