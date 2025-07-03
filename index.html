@@ -46,9 +46,42 @@
       text-align: center;
       margin-bottom: 1rem;
     }
-    form {
-      display: grid;
-      gap: 1rem;
+    <form id="korrekturForm" enctype="multipart/form-data">
+  <label>
+    Klassenarbeit (Bild/PDF):
+    <!-- Hier ist der entscheidende Teil: name="data" -->
+    <input type="file" name="data" accept="image/*,.pdf" required />
+  </label>
+
+  <label>
+    Klassenstufe:
+    <select name="klasse" id="klasseSelect" required>
+      <option value="">Bitte wählen</option>
+      <!-- Optionen per JS befüllt -->
+    </select>
+  </label>
+
+  <label>
+    Fach:
+    <select name="fach" id="fachSelect" required>
+      <option value="">Bitte wählen</option>
+      <option value="Deutsch">Deutsch</option>
+      <option value="Mathematik">Mathematik</option>
+      <option value="Philosophie">Philosophie</option>
+    </select>
+  </label>
+
+  <label>
+    Art der Aufgabe:
+    <select name="aufgabe" id="aufgabeSelect" required>
+      <option value="">Bitte wählen</option>
+      <!-- Optionen per JS befüllt -->
+    </select>
+  </label>
+
+  <button type="submit">Absenden & bewerten</button>
+</form>
+
     }
     .results {
       margin-top: 2rem;
@@ -131,7 +164,7 @@
     const aufgabeSelect = document.getElementById('aufgabeSelect');
     const form          = document.getElementById('korrekturForm');
     const resultsDiv    = document.getElementById('results');
-    const WEBHOOK_URL   = 'https://minerva.app.n8n.cloud/webhook-test/7199702a-7ff5-414a-ad0e-cb7919adecef';
+    const WEBHOOK_URL   = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
 
     // 1) Klassenstufen laden
     for (let i = 1; i <= 13; i++) {
