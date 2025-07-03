@@ -168,13 +168,41 @@
       resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
 
       const formData = new FormData(form);
-      try {
-        const resp = await fetch(WEBHOOK_URL, {
-          method: 'POST',
-          body: formData,
-        });
-        if (!resp.ok) throw new Error(`Fehler ${resp.status}`);
-        const json = await resp.json();
+try {
+  const resp = await fetch(WEBHOOK_URL, {
+    method: 'POST',
+    body: formData,
+  });
+  // Button, Status‐Text o. Ä. updaten, während wir auf die Antwort warten…
+  if (!resp.ok) {
+    throw new Error(`Serverfehler ${resp.status}`);
+  }
+  // 1) Lies den Body immer als Text ein
+  const text = await resp.text();
+  if (!text) {
+    throw new Error('Leere Antwort vom Server');
+  }
+  // 2) Parse erst jetzt das JSON
+  const json = JSON.parse(text);
+
+  // Hier weiter mit json, z.B.:
+  resultsDiv.innerHTML = `
+    <div class="box streng">
+      <h2>Strenge Bewertung</h2>
+      <p><strong>Note:</strong> ${json.streng?.Note||'–'}</p>
+      <pre>${json.streng?.Korrektur||'–'}</pre>
+    </div>
+    <div class="box nachsichtig">
+      <h2>Nachsichtige Bewertung</h2>
+      <p><strong>Note:</strong> ${json.nachsichtig?.Note||'–'}</p>
+      <pre>${json.nachsichtig?.Korrektur||'–'}</pre>
+    </div>
+  `;
+} catch (err) {
+  console.error(err);
+  resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
+}
+
         // Ergebnis anzeigen
         resultsDiv.innerHTML = `
           <div class="box streng">
