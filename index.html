@@ -123,13 +123,15 @@
   </div>
 
   <script>
+  document.addEventListener('DOMContentLoaded', () => {
     const klasseSelect = document.getElementById('klasseSelect');
-    const fachSelect = document.getElementById('fachSelect');
-    const aufgabeSelect = document.getElementById('aufgabeSelect');
-    const form = document.getElementById('korrekturForm');
-    const resultsDiv = document.getElementById('results');
-    const WEBHOOK_URL = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
+    const fachSelect   = document.getElementById('fachSelect');
+    const aufgabeSelect= document.getElementById('aufgabeSelect');
+    const form         = document.getElementById('korrekturForm');
+    const resultsDiv   = document.getElementById('results');
+    const WEBHOOK_URL  = 'https://minerva.app.n8n.cloud/webhook-test/7199702a-7ff5-414a-ad0e-cb7919adecef';
 
+    // 1) Klassenstufen laden
     for (let i = 1; i <= 13; i++) {
       const opt = document.createElement('option');
       opt.value = i;
@@ -137,62 +139,62 @@
       klasseSelect.appendChild(opt);
     }
 
+    // 2) Mapping Fach → Aufgaben
     const aufgabenByFach = {
-      Deutsch: ['Diktat', 'Aufsatz', 'Erörterung', 'Zusammenfassung', 'Bericht', 'Gedicht'],
-      Mathematik: ['Textaufgabe', 'Rechenweg', 'Beweis', 'Formel umstellen'],
-      Philosophie: ['Argumentation', 'Interpretation', 'Essay', 'Begriffsanalyse']
+      Deutsch:     ['Diktat','Aufsatz','Erörterung','Zusammenfassung','Bericht','Gedicht'],
+      Mathematik:  ['Textaufgabe','Rechenweg','Beweis','Formel umstellen'],
+      Philosophie: ['Argumentation','Interpretation','Essay','Begriffsanalyse'],
     };
 
     fachSelect.addEventListener('change', () => {
-      const fach = fachSelect.value;
+      // leeres Placeholder-Option zuerst
       aufgabeSelect.innerHTML = '<option value="">Bitte wählen</option>';
-      (aufgabenByFach[fach] || []).forEach(a => {
-        const opt = document.createElement('option');
-        opt.value = a;
-        opt.textContent = a;
-        aufgabeSelect.appendChild(opt);
+      const liste = aufgabenByFach[fachSelect.value] || [];
+      liste.forEach(a => {
+        const o = document.createElement('option');
+        o.value       = a;
+        o.textContent = a;
+        aufgabeSelect.appendChild(o);
       });
     });
 
-   form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+    // 3) Formular abschicken
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
 
-  // Validierung erzwingen
-  if (!form.checkValidity()) {
-    form.reportValidity();
-    return;
-  }
-
-  resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
-  const formData = new FormData(form);
-  // …
-});
-
+      const formData = new FormData(form);
       try {
         const resp = await fetch(WEBHOOK_URL, {
           method: 'POST',
-          body: formData
+          body: formData,
         });
         if (!resp.ok) throw new Error(`Fehler ${resp.status}`);
         const json = await resp.json();
-
+        // Ergebnis anzeigen
         resultsDiv.innerHTML = `
           <div class="box streng">
             <h2>Strenge Bewertung</h2>
-            <p><strong>Note:</strong> ${json?.streng?.Note || '–'}</p>
-            <pre>${json?.streng?.Korrektur || '–'}</pre>
+            <p><strong>Note:</strong> ${json.streng?.Note||'–'}</p>
+            <pre>${json.streng?.Korrektur||'–'}</pre>
           </div>
           <div class="box nachsichtig">
             <h2>Nachsichtige Bewertung</h2>
-            <p><strong>Note:</strong> ${json?.nachsichtig?.Note || '–'}</p>
-            <pre>${json?.nachsichtig?.Korrektur || '–'}</pre>
+            <p><strong>Note:</strong> ${json.nachsichtig?.Note||'–'}</p>
+            <pre>${json.nachsichtig?.Korrektur||'–'}</pre>
           </div>
         `;
       } catch (err) {
-        resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
         console.error(err);
+        resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
       }
     });
-  </script>
+  });
+</script>
+
 </body>
 </html>
