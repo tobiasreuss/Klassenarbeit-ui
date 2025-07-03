@@ -96,7 +96,9 @@
 
       <label>
         Klassenstufe:
-        <select name="klasse" id="klasseSelect" required></select>
+        <select name="klasse" id="klasseSelect" required>
+          <option value="">Bitte wählen</option>
+        </select>
       </label>
 
       <label>
@@ -148,7 +150,8 @@
 
     fachSelect.addEventListener('change', () => {
       aufgabeSelect.innerHTML = '<option value="">Bitte wählen</option>';
-      (aufgabenByFach[fachSelect.value] || []).forEach(a => {
+      const liste = aufgabenByFach[fachSelect.value] || [];
+      liste.forEach(a => {
         const o = document.createElement('option');
         o.value       = a;
         o.textContent = a;
