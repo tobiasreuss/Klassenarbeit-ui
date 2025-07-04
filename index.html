@@ -193,49 +193,50 @@
     });
 
     // 3) Formular abschicken
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
-      resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
 
-      const formData = new FormData(form);
-      try {
-        const resp = await fetch(WEBHOOK_URL, {
-          method: 'POST',
-          body: formData,
-        });
-        if (!resp.ok) {
-  throw new Error(`Serverfehler ${resp.status}`);
-}
+  resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
 
-const json = await resp.json();
-
-if (!json || !json.streng || !json.nachsichtig) {
-  throw new Error('Leere oder unvollständige Antwort vom Server');
-}
-
-
-        resultsDiv.innerHTML = `
-          <div class="box streng">
-            <h2>Strenge Bewertung</h2>
-            <p><strong>Note:</strong> ${json.streng?.Note || '–'}</p>
-            <pre>${json.streng?.Korrektur || '–'}</pre>
-          </div>
-          <div class="box nachsichtig">
-            <h2>Nachsichtige Bewertung</h2>
-            <p><strong>Note:</strong> ${json.nachsichtig?.Note || '–'}</p>
-            <pre>${json.nachsichtig?.Korrektur || '–'}</pre>
-          </div>
-        `;
-      } catch (err) {
-        console.error(err);
-        resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
-      }
+  const formData = new FormData(form);
+  try {
+    const resp = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      body: formData,
     });
-  });
+
+    if (!resp.ok) {
+      throw new Error(`Serverfehler ${resp.status}`);
+    }
+
+    const json = await resp.json();
+
+    if (!json || !json.streng || !json.nachsichtig) {
+      throw new Error('Leere oder unvollständige Antwort vom Server');
+    }
+
+    resultsDiv.innerHTML = `
+      <div class="box streng">
+        <h2>Strenge Bewertung</h2>
+        <p><strong>Note:</strong> ${json.streng.Note}</p>
+        <pre>${json.streng.Korrektur}</pre>
+      </div>
+      <div class="box nachsichtig">
+        <h2>Nachsichtige Bewertung</h2>
+        <p><strong>Note:</strong> ${json.nachsichtig.Note}</p>
+        <pre>${json.nachsichtig.Korrektur}</pre>
+      </div>
+    `;
+  } catch (err) {
+    console.error(err);
+    resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
+  }
+});
+    
   </script>
 </body>
 </html>
