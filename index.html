@@ -177,22 +177,25 @@ form.addEventListener('submit', async (e) => {
     }
 
     const json = await resp.json();
+let body = json;
+// Wenn die Bewertung in message.content steckt, parsen wir sie
+if (json.message && json.message.content) {
+  body = JSON.parse(json.message.content);
+}
 
-    if (!json || !json.streng || !json.nachsichtig) {
-      throw new Error('Leere oder unvollständige Antwort vom Server');
-    }
+// Und ab jetzt immer body statt json verwenden:
+resultsDiv.innerHTML = `
+  <div class="box streng">
+    <h2>Strenge Bewertung</h2>
+    <p><strong>Note:</strong> ${body.streng.Note}</p>
+    <pre>${body.streng.Korrektur}</pre>
+  </div>
+  <div class="box nachsichtig">
+    <h2>Nachsichtige Bewertung</h2>
+    <p><strong>Note:</strong> ${body.nachsichtig.Note}</p>
+    <pre>${body.nachsichtig.Korrektur}</pre>
+  </div>`;
 
-    resultsDiv.innerHTML = `
-      <div class="box streng">
-        <h2>Strenge Bewertung</h2>
-        <p><strong>Note:</strong> ${json.streng.Note}</p>
-        <pre>${json.streng.Korrektur}</pre>
-      </div>
-      <div class="box nachsichtig">
-        <h2>Nachsichtige Bewertung</h2>
-        <p><strong>Note:</strong> ${json.nachsichtig.Note}</p>
-        <pre>${json.nachsichtig.Korrektur}</pre>
-      </div>
     `;
   } catch (err) {
     console.error(err);
