@@ -41,48 +41,11 @@
       border: 4px solid white;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
-    h1 {
-      font-size: 1.6rem;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    <form id="korrekturForm" enctype="multipart/form-data">
-  <label>
-    Klassenarbeit (Bild/PDF):
-    <!-- Hier ist der entscheidende Teil: name="data" -->
-    <input type="file" name="data" accept="image/*,.pdf" required />
-  </label>
-
-  <label>
-    Klassenstufe:
-    <select name="klasse" id="klasseSelect" required>
-      <option value="">Bitte wählen</option>
-      <!-- Optionen per JS befüllt -->
-    </select>
-  </label>
-
-  <label>
-    Fach:
-    <select name="fach" id="fachSelect" required>
-      <option value="">Bitte wählen</option>
-      <option value="Deutsch">Deutsch</option>
-      <option value="Mathematik">Mathematik</option>
-      <option value="Philosophie">Philosophie</option>
-    </select>
-  </label>
-
-  <label>
-    Art der Aufgabe:
-    <select name="aufgabe" id="aufgabeSelect" required>
-      <option value="">Bitte wählen</option>
-      <!-- Optionen per JS befüllt -->
-    </select>
-  </label>
-
-  <button type="submit">Absenden & bewerten</button>
-</form>
-
-    }
+h1 {
+  font-size: 1.6rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
     .results {
       margin-top: 2rem;
     }
@@ -235,8 +198,9 @@ form.addEventListener('submit', async (e) => {
     console.error(err);
     resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
   }
-};
-    
+}); // <-- Klammer und Semikolon ergänzt
+}); // <-- Diese schließende Klammer für DOMContentLoaded ergänzt
+
   </script>
 </body>
 </html>
