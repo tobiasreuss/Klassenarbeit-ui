@@ -191,6 +191,7 @@
         `;
       } catch (err) {
         console.error(err);
+        console.log('==> UI-Update mit:', body);
         resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
       }
     });
