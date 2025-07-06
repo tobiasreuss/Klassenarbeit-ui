@@ -1,209 +1,74 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <title>Klassenarbeit Korrektur</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #eaf3fa;
-      margin: 0;
-      padding: 2rem;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 2rem;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      position: relative;
-    }
-    .beta-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #ffdd00;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: bold;
-    }
-    .bilder {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-    }
-    .bilder img {
-      width: 48%;
-      border-radius: 8px;
-      border: 4px solid white;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    }
-h1 {
-  font-size: 1.6rem;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-    .results {
-      margin-top: 2rem;
-    }
-    .box {
-      padding: 1rem;
-      border-radius: 4px;
-      margin-bottom: 1rem;
-    }
-    .streng {
-      background: #ffe5e5;
-      border: 1px solid #ffaaaa;
-    }
-    .nachsichtig {
-      background: #e5ffe5;
-      border: 1px solid #aaffaa;
-    }
-    button {
-      background-color: #4a90e2;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 0.75rem;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <span class="beta-badge">Beta 0.1</span>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const klasseSelect  = document.getElementById('klasseSelect');
+  const fachSelect    = document.getElementById('fachSelect');
+  const aufgabeSelect = document.getElementById('aufgabeSelect');
+  const form          = document.getElementById('korrekturForm');
+  const resultsDiv    = document.getElementById('results');
+  const WEBHOOK_URL   = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
 
-    <div class="bilder">
-      <img src="images/OIP.jpg" alt="Fröhliche Lehrerin mit Schülern">
-      <img src="images/OIP2.jpg" alt="Begeisterte Lehrerin motiviert Schüler">
-    </div>
-
-    <h1>📄 Klassenarbeit Korrektur</h1>
-
-    <form id="korrekturForm" enctype="multipart/form-data">
-      <label>
-        Klassenarbeit (Bild/PDF):
-        <input type="file" name="data" accept="image/*,.pdf" required />
-      </label>
-
-      <label>
-        Klassenstufe:
-        <select name="klasse" id="klasseSelect" required>
-          <option value="">Bitte wählen</option>
-        </select>
-      </label>
-
-      <label>
-        Fach:
-        <select name="fach" id="fachSelect" required>
-          <option value="">Bitte wählen</option>
-          <option value="Deutsch">Deutsch</option>
-          <option value="Mathematik">Mathematik</option>
-          <option value="Philosophie">Philosophie</option>
-        </select>
-      </label>
-
-      <label>
-        Art der Aufgabe:
-        <select name="aufgabe" id="aufgabeSelect" required>
-          <option value="">Bitte wählen</option>
-        </select>
-      </label>
-
-      <button type="submit">Absenden & bewerten</button>
-    </form>
-
-    <div class="results" id="results"></div>
-  </div>
-
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const klasseSelect  = document.getElementById('klasseSelect');
-    const fachSelect    = document.getElementById('fachSelect');
-    const aufgabeSelect = document.getElementById('aufgabeSelect');
-    const form          = document.getElementById('korrekturForm');
-    const resultsDiv    = document.getElementById('results');
-    const WEBHOOK_URL   = 'https://minerva.app.n8n.cloud/webhook/7199702a-7ff5-414a-ad0e-cb7919adecef';
-
-    // 1) Klassenstufen laden
-    for (let i = 1; i <= 13; i++) {
-      const opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = `Klasse ${i}`;
-      klasseSelect.appendChild(opt);
-    }
-
-    // 2) Mapping Fach → Aufgaben
-    const aufgabenByFach = {
-      Deutsch:     ['Diktat','Aufsatz','Erörterung','Zusammenfassung','Bericht','Gedicht'],
-      Mathematik:  ['Textaufgabe','Rechenweg','Beweis','Formel umstellen'],
-      Philosophie: ['Argumentation','Interpretation','Essay','Begriffsanalyse'],
-    };
-
-    fachSelect.addEventListener('change', () => {
-      aufgabeSelect.innerHTML = '<option value="">Bitte wählen</option>';
-      const liste = aufgabenByFach[fachSelect.value] || [];
-      liste.forEach(a => {
-        const o = document.createElement('option');
-        o.value       = a;
-        o.textContent = a;
-        aufgabeSelect.appendChild(o);
-      });
-    });
-
-    // 3) Formular abschicken
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (!form.checkValidity()) {
-    form.reportValidity();
-    return;
+  // Klassenstufen laden
+  for (let i = 1; i <= 13; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `Klasse ${i}`;
+    klasseSelect.appendChild(opt);
   }
 
-  resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
+  // Mapping Fach → Aufgaben
+  const aufgabenByFach = {
+    Deutsch:     ['Diktat','Aufsatz','Erörterung','Zusammenfassung','Bericht','Gedicht'],
+    Mathematik:  ['Textaufgabe','Rechenweg','Beweis','Formel umstellen'],
+    Philosophie: ['Argumentation','Interpretation','Essay','Begriffsanalyse'],
+  };
 
-  const formData = new FormData(form);
-  try {
-    const resp = await fetch(WEBHOOK_URL, {
-      method: 'POST',
-      body: formData,
+  fachSelect.addEventListener('change', () => {
+    aufgabeSelect.innerHTML = '<option value="">Bitte wählen</option>';
+    (aufgabenByFach[fachSelect.value] || []).forEach(a => {
+      const o = document.createElement('option');
+      o.value       = a;
+      o.textContent = a;
+      aufgabeSelect.appendChild(o);
     });
+  });
 
-    if (!resp.ok) {
-      throw new Error(`Serverfehler ${resp.status}`);
+  // Formular abschicken
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
     }
 
-    const json = await resp.json();
-let body = json;
-// Wenn die Bewertung in message.content steckt, parsen wir sie
-if (json.message && json.message.content) {
-  body = JSON.parse(json.message.content);
-}
+    resultsDiv.innerHTML = '<p>Bitte warten, Korrektur wird geladen…</p>';
+    const formData = new FormData(form);
 
-// Und ab jetzt immer body statt json verwenden:
-resultsDiv.innerHTML = `
-  <div class="box streng">
-    <h2>Strenge Bewertung</h2>
-    <p><strong>Note:</strong> ${body.streng.Note}</p>
-    <pre>${body.streng.Korrektur}</pre>
-  </div>
-  <div class="box nachsichtig">
-    <h2>Nachsichtige Bewertung</h2>
-    <p><strong>Note:</strong> ${body.nachsichtig.Note}</p>
-    <pre>${body.nachsichtig.Korrektur}</pre>
-  </div>`;
+    try {
+      const resp = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
+      if (!resp.ok) throw new Error(`Serverfehler ${resp.status}`);
 
-    `;
-  } catch (err) {
-    console.error(err);
-    resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
-  }
-}); // <-- Klammer und Semikolon ergänzt
-}); // <-- Diese schließende Klammer für DOMContentLoaded ergänzt
+      const json = await resp.json();
+      let body = json;
+      if (json.message && json.message.content) {
+        body = JSON.parse(json.message.content);
+      }
 
-  </script>
-</body>
-</html>
+      resultsDiv.innerHTML = `
+        <div class="box streng">
+          <h2>Strenge Bewertung</h2>
+          <p><strong>Note:</strong> ${body.streng.Note}</p>
+          <pre>${body.streng.Korrektur}</pre>
+        </div>
+        <div class="box nachsichtig">
+          <h2>Nachsichtige Bewertung</h2>
+          <p><strong>Note:</strong> ${body.nachsichtig.Note}</p>
+          <pre>${body.nachsichtig.Korrektur}</pre>
+        </div>
+      `;
+    } catch (err) {
+      console.error(err);
+      resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
+    }
+  });
+});
+</script>
