@@ -158,31 +158,38 @@
       const formData = new FormData(form);
 
       try {
+        // Fetch
         const resp = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
+        console.log('HTTP-Status:', resp.status);
         if (!resp.ok) throw new Error(`Serverfehler ${resp.status}`);
 
-// 2) Roh-Antwort als Text holen und loggen
-      const text = await resp.text();
-      console.log('🔍 Raw Response:', text);
-      if (!text) throw new Error('Leere Antwort vom Server');
-        
-        const json = await resp.json();
-        console.log('Server-Antwort:', json);
+        // Raw text lesen
+        const text = await resp.text();
+        console.log('🔍 Raw Response:', text);
+        if (!text) throw new Error('Leere Antwort vom Server');
+
+        // JSON parsen
+        const json = JSON.parse(text);
+        console.log('🔍 Parsed JSON:', json);
+
+        // Modell-Content parsen, falls nötig
         let body = json;
         if (json.message && json.message.content) {
           body = JSON.parse(json.message.content);
         }
+        console.log('🔍 body nach parse:', body);
 
+        // Anzeige
         resultsDiv.innerHTML = `
           <div class="box streng">
             <h2>Strenge Bewertung</h2>
             <p><strong>Note:</strong> ${body.streng.Note}</p>
             <pre>${body.streng.Korrektur}</pre>
           </div>
-          <div class="box nachsichtlich">
+          <div class="box nachsichtig">
             <h2>Nachsichtige Bewertung</h2>
-            <p><strong>Note:</strong> ${body.nachsichtlich.Note}</p>
-            <pre>${body.nachsichtlich.Korrektur}</pre>
+            <p><strong>Note:</strong> ${body.nachsichtig.Note}</p>
+            <pre>${body.nachsichtig.Korrektur}</pre>
           </div>
         `;
       } catch (err) {
