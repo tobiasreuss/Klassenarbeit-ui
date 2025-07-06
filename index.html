@@ -171,6 +171,7 @@
         if (!resp.ok) throw new Error(`Serverfehler ${resp.status}`);
 
         const json = await resp.json();
+        console.log('Server-Antwort:', json);
         let body = json;
         if (json.message && json.message.content) {
           body = JSON.parse(json.message.content);
