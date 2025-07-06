@@ -161,6 +161,11 @@
         const resp = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
         if (!resp.ok) throw new Error(`Serverfehler ${resp.status}`);
 
+// 2) Roh-Antwort als Text holen und loggen
+      const text = await resp.text();
+      console.log('🔍 Raw Response:', text);
+      if (!text) throw new Error('Leere Antwort vom Server');
+        
         const json = await resp.json();
         console.log('Server-Antwort:', json);
         let body = json;
