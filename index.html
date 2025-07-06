@@ -85,34 +85,26 @@
     <h1>📄 Klassenarbeit Korrektur</h1>
 
     <form id="korrekturForm" enctype="multipart/form-data">
-      <label>
-        Klassenarbeit (Bild/PDF):
-        <input type="file" id="dataInput" name="data" accept="image/*,.pdf" required />
-      </label>
+      <label for="dataInput">Klassenarbeit (Bild/PDF):</label>
+      <input type="file" id="dataInput" name="data" accept="image/*,.pdf" required />
 
-      <label>
-        Klassenstufe:
-        <select name="klasse" id="klasseSelect" required>
-          <option value="">Bitte wählen</option>
-        </select>
-      </label>
+      <label for="klasseSelect">Klassenstufe:</label>
+      <select name="klasse" id="klasseSelect" required>
+        <option value="">Bitte wählen</option>
+      </select>
 
-      <label>
-        Fach:
-        <select name="fach" id="fachSelect" required>
-          <option value="">Bitte wählen</option>
-          <option value="Deutsch">Deutsch</option>
-          <option value="Mathematik">Mathematik</option>
-          <option value="Philosophie">Philosophie</option>
-        </select>
-      </label>
+      <label for="fachSelect">Fach:</label>
+      <select name="fach" id="fachSelect" required>
+        <option value="">Bitte wählen</option>
+        <option value="Deutsch">Deutsch</option>
+        <option value="Mathematik">Mathematik</option>
+        <option value="Philosophie">Philosophie</option>
+      </select>
 
-      <label>
-        Art der Aufgabe:
-        <select name="aufgabe" id="aufgabeSelect" required>
-          <option value="">Bitte wählen</option>
-        </select>
-      </label>
+      <label for="aufgabeSelect">Art der Aufgabe:</label>
+      <select name="aufgabe" id="aufgabeSelect" required>
+        <option value="">Bitte wählen</option>
+      </select>
 
       <button type="submit">Absenden & bewerten</button>
     </form>
@@ -133,7 +125,7 @@
     for (let i = 1; i <= 13; i++) {
       const opt = document.createElement('option');
       opt.value = i;
-      opt.textContent = Klasse ${i};
+      opt.textContent = `Klasse ${i}`;
       klasseSelect.appendChild(opt);
     }
 
@@ -146,8 +138,7 @@
 
     fachSelect.addEventListener('change', () => {
       aufgabeSelect.innerHTML = '<option value="">Bitte wählen</option>';
-      const liste = aufgabenByFach[fachSelect.value] || [];
-      liste.forEach(a => {
+      (aufgabenByFach[fachSelect.value] || []).forEach(a => {
         const o = document.createElement('option');
         o.value       = a;
         o.textContent = a;
@@ -168,7 +159,7 @@
 
       try {
         const resp = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
-        if (!resp.ok) throw new Error(Serverfehler ${resp.status});
+        if (!resp.ok) throw new Error(`Serverfehler ${resp.status}`);
 
         const json = await resp.json();
         console.log('Server-Antwort:', json);
@@ -177,7 +168,7 @@
           body = JSON.parse(json.message.content);
         }
 
-        resultsDiv.innerHTML = 
+        resultsDiv.innerHTML = `
           <div class="box streng">
             <h2>Strenge Bewertung</h2>
             <p><strong>Note:</strong> ${body.streng.Note}</p>
@@ -188,11 +179,10 @@
             <p><strong>Note:</strong> ${body.nachsichtig.Note}</p>
             <pre>${body.nachsichtig.Korrektur}</pre>
           </div>
-        ;
+        `;
       } catch (err) {
         console.error(err);
-        console.log('==> UI-Update mit:', body);
-        resultsDiv.innerHTML = <p style="color:red">Fehler: ${err.message}</p>;
+        resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
       }
     });
   });
