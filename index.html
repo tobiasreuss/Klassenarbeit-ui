@@ -133,7 +133,7 @@
     for (let i = 1; i <= 13; i++) {
       const opt = document.createElement('option');
       opt.value = i;
-      opt.textContent = `Klasse ${i}`;
+      opt.textContent = Klasse ${i};
       klasseSelect.appendChild(opt);
     }
 
@@ -168,7 +168,7 @@
 
       try {
         const resp = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
-        if (!resp.ok) throw new Error(`Serverfehler ${resp.status}`);
+        if (!resp.ok) throw new Error(Serverfehler ${resp.status});
 
         const json = await resp.json();
         console.log('Server-Antwort:', json);
@@ -177,24 +177,22 @@
           body = JSON.parse(json.message.content);
         }
 
-        resultsDiv.innerHTML = `
-        <div class="box streng">
-          <h2>Strenge Bewertung</h2>
-          <p><strong>Note:</strong> ${body.streng.Note}</p>
-          <pre>${body.streng.Korrektur}</pre>
-        </div>
-        <div class="box nachsichtig">
-          <h2>Nachsichtige Bewertung</h2>
-          <p><strong>Note:</strong> ${body.nachsichtig.Note}</p>
-          <pre>${body.nachsichtig.Korrektur}</pre>
-        </div>
-`;
-
-        `;
+        resultsDiv.innerHTML = 
+          <div class="box streng">
+            <h2>Strenge Bewertung</h2>
+            <p><strong>Note:</strong> ${body.streng.Note}</p>
+            <pre>${body.streng.Korrektur}</pre>
+          </div>
+          <div class="box nachsichtig">
+            <h2>Nachsichtige Bewertung</h2>
+            <p><strong>Note:</strong> ${body.nachsichtig.Note}</p>
+            <pre>${body.nachsichtig.Korrektur}</pre>
+          </div>
+        ;
       } catch (err) {
         console.error(err);
         console.log('==> UI-Update mit:', body);
-        resultsDiv.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
+        resultsDiv.innerHTML = <p style="color:red">Fehler: ${err.message}</p>;
       }
     });
   });
