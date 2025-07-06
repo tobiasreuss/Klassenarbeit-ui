@@ -180,8 +180,8 @@
         resultsDiv.innerHTML = `
           <div class="box streng">
             <h2>Strenge Bewertung</h2>
-            <p><strong>Note:</strong> ${body.streng.Note}</p>
-            <pre>${body.streng.Korrektur}</pre>
+            Note: {{$json.streng.Note}}
+            {{$json.streng.Korrektur}}
           </div>
           <div class="box nachsichtig">
             <h2>Nachsichtige Bewertung</h2>
