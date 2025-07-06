@@ -140,7 +140,7 @@
       aufgabeSelect.innerHTML = '<option value="">Bitte wählen</option>';
       (aufgabenByFach[fachSelect.value] || []).forEach(a => {
         const o = document.createElement('option');
-        o.value       = a;
+        o.value = a;
         o.textContent = a;
         aufgabeSelect.appendChild(o);
       });
@@ -158,28 +158,19 @@
       const formData = new FormData(form);
 
       try {
-        // Fetch
         const resp = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
-        console.log('HTTP-Status:', resp.status);
         if (!resp.ok) throw new Error(`Serverfehler ${resp.status}`);
 
-        // Raw text lesen
         const text = await resp.text();
-        console.log('🔍 Raw Response:', text);
         if (!text) throw new Error('Leere Antwort vom Server');
 
-        // JSON parsen
         const json = JSON.parse(text);
-        console.log('🔍 Parsed JSON:', json);
-
-        // Modell-Content parsen, falls nötig
-        let body = json;
+        let body  = json;
         if (json.message && json.message.content) {
           body = JSON.parse(json.message.content);
         }
-        console.log('🔍 body nach parse:', body);
 
-        // Anzeige
+        // UI-Update mit echten Werten
         resultsDiv.innerHTML = `
           <div class="box streng">
             <h2>Strenge Bewertung</h2>
